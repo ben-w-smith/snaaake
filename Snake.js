@@ -122,18 +122,6 @@ Snake.prototype.move = function() {
     }
 }
 
-Snake.prototype.keyCodeToDirection = function(keycode) {
-    const UP_KEY    = 38
-    const DOWN_KEY  = 40
-    const LEFT_KEY  = 37
-    const RIGHT_KEY = 39
-
-    if(UP_KEY === keycode) return 'up'
-    if(DOWN_KEY === keycode) return 'down'
-    if(LEFT_KEY === keycode) return 'left'
-    if(RIGHT_KEY === keycode) return 'right'
-}
-
 Snake.prototype.changeDirection = function(direction) {
     direction = direction.toLowerCase().trim()
 
