@@ -16,11 +16,19 @@ app.use(bodyParser.json())
 
 // static files
 app.use(express.static( path.join(__dirname, 'public') ))
+app.use('/snake', express.static( path.join(__dirname, 'public') ))
 
 app.get('/', function(req, res) {
     // hello world
     res.send('hello world')
 })
+
+// ideally this is where you make a new game
+// app.get('/snake', function(req, res) {
+//     // view snake game
+//     let file = path.join(__dirname, 'public', 'snake.html') 
+//     res.sendFile(file)
+// })
 
 app.get('/snake/:id', function(req, res) {
     // view snake game

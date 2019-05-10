@@ -15,7 +15,7 @@ ws.onmessage = function(e) {
 }
 
 // drawing snake
-const canvas = document.getElementById('canvas')
+const canvas = document.getElementById('snake')
 let game = new Game(canvas) 
 game.clearCanvas()
 

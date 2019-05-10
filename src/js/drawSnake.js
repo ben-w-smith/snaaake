@@ -4,6 +4,9 @@ let Game = function(canvas, state) {
 
     this.unit = 10
 
+    this.backgroundColor = 'white' 
+    this.borderColor = 'black'
+
     // let width = state.arena[0].length
     // let height = state.arena.length 
     let width = 30
@@ -14,10 +17,10 @@ let Game = function(canvas, state) {
 }
 
 Game.prototype.clearCanvas = function() {
-    this.ctx.fillStyle = this.const.backgroundColor 
-    this.ctx.strokeStyle = this.const.borderColor 
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height) 
-    this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.fillStyle = this.backgroundColor 
+    this.ctx.strokeStyle = this.borderColor 
+    this.ctx.fillRect(0, 0, this.width, this.height) 
+    this.ctx.strokeRect(0, 0, this.width, this.height)
 }
 
 Game.prototype.drawCanvas = function(state) {
