@@ -24,6 +24,13 @@ if(game_id) {
 // event listeners
 //---
 
+// get game state
 document.addEventListener('update', function(e) {
     console.log(ws.gameState)
+    game.state = ws.gameState
+})
+
+document.addEventListener('keypress', function(e) {
+    let keyCode = e.keyCode
+    game.changeDirection(keyCode)
 })
