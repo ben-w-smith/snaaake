@@ -23,22 +23,42 @@ app.get('/', function(req, res) {
     res.send('hello world')
 })
 
-// ideally this is where you make a new game
-// app.get('/snake', function(req, res) {
-//     // view snake game
-//     let file = path.join(__dirname, 'public', 'snake.html') 
-//     res.sendFile(file)
-// })
-
-app.get('/snake/:id', function(req, res) {
+app.get('/snake', function(req, res) {
     // view snake game
     let file = path.join(__dirname, 'public', 'snake.html') 
     res.sendFile(file)
 })
 
-app.get('/ws', function(req, res) {
-    let file = path.join(__dirname, 'public', 'ws.html')
-    res.sendfile(file)
+app.get('/snake/game/:id', function(req, res) {
+    // view snake game
+    let id = req.params.id
+    if(games[id]) {
+        let file = path.join(__dirname, 'public', 'snake.html') 
+        res.sendFile(file)
+    } else {
+        res.redirect('/snake')
+    }
+})
+
+app.post('/snake/game/:id', function(req, res) {
+    // send game state to user
+    const id = req.params.id
+
+    let state = games[id].getState()
+    state.id = id 
+
+    res.json(state)
+})
+
+app.get('/snake/new', function(req, res) {
+    // generate new snake game
+    const Snake = require('./Snake') 
+    let id = Object.keys(games).length
+    let snake = new Snake()
+    games[id] = snake 
+    games[id].new()
+
+    res.redirect('/snake/game/' + id)
 })
 
 app.post('/snake/new', function(req, res) {
@@ -49,10 +69,8 @@ app.post('/snake/new', function(req, res) {
     games[id] = snake 
     games[id].new()
 
-    let state = games[id].getState() 
+    let state = games[id].getState()
     state.id = id
-
-    wssEventHandler.emit('update', state)
 
     res.json(state)
 })
@@ -67,16 +85,6 @@ app.post('/snake/move/:id', function(req, res) {
     state.id = id
 
     wssEventHandler.emit('update', state)
-
-    res.json(state)
-})
-
-app.post('/snake/state/:id', function(req, res) {
-    // send game state to user
-    const id = req.params.id
-
-    let state = games[id].getState()
-    state.id = id 
 
     res.json(state)
 })

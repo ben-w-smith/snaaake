@@ -1,4 +1,6 @@
-let Game = function(canvas, state) {
+import axios from 'axios'
+
+let Game = function(canvas) {
     this.canvas = canvas 
     this.ctx = this.canvas.getContext('2d')
 
@@ -27,7 +29,7 @@ Game.prototype.drawCanvas = function(state) {
     let grid = state.arena
 
     for(let row = 0; row < grid.length; row++) {
-        for(let column = 0; column < row.length; column++) {
+        for(let column = 0; column < grid[row].length; column++) {
             if(grid[row][column] === 1) this.drawSnake(column, row) 
             if(grid[row][column] === 2) this.drawFood(column, row) 
         }
@@ -35,6 +37,9 @@ Game.prototype.drawCanvas = function(state) {
 }
 
 Game.prototype.drawSnake = function(x, y) {
+    x = x * this.unit 
+    y = y * this.unit
+
     this.ctx.fillStyle = 'lightgreen'
     this.ctx.strokeStyle = 'darkgreen'
     this.ctx.fillRect(x, y, this.unit, this.unit) 
@@ -42,6 +47,9 @@ Game.prototype.drawSnake = function(x, y) {
 }
 
 Game.prototype.drawFood = function(x, y) {
+    x = x * this.unit 
+    y = y * this.unit
+
     this.ctx.fillStyle = 'red'
     this.ctx.strokeStyle = 'darkred'
     this.ctx.fillRect(x, y, this.unit, this.unit) 
@@ -51,6 +59,17 @@ Game.prototype.drawFood = function(x, y) {
 Game.prototype.draw = function(state) {
     this.clearCanvas()
     this.drawCanvas(state)
+}
+
+Game.prototype.getState = function(id) {
+    axios.post('/snake/game/' + id)
+    .then(function(resp) {
+        console.log(resp) 
+        this.draw(resp.data)
+    }.bind(this))
+    .catch(function(err) {
+        console.warn(err)
+    })
 }
 
 export default Game

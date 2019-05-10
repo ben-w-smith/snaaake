@@ -1,22 +1,29 @@
 // 3 major things...
 import Game from './drawSnake'
+import ws from './webSocket'
 
-// websockedts
-let ws = new WebSocket('ws://localhost:3000') 
 
-ws.onopen = function() {
-    ws.send('connected')
-}
 
-ws.onmessage = function(e) {
-    console.log(e)
-    let event = new Event('update')
-    document.dispatchEvent(event)
-}
-
-// drawing snake
+// define dom elements
+//---
+const game_id = window.location.pathname.split('/').pop() || false
 const canvas = document.getElementById('snake')
+const newGame = document.getElementById("new")
+const start = document.getElementById("start")
+const pause = document.getElementById("pause")
+const next = document.getElementById("next")
+
 let game = new Game(canvas) 
 game.clearCanvas()
+if(game_id) {
+    game.getState(game_id)
+}
 
-// controlling snake
+
+
+// event listeners
+//---
+
+document.addEventListener('update', function(e) {
+    console.log(ws.gameState)
+})
