@@ -52,6 +52,8 @@ app.post('/snake/new', function(req, res) {
     let state = games[id].getState() 
     state.id = id
 
+    wssEventHandler.emit('update', state)
+
     res.json(state)
 })
 
