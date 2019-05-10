@@ -45,7 +45,6 @@ app.post('/snake/game/:id', function(req, res) {
     const id = req.params.id
 
     let state = games[id].getState()
-    state.id = id 
 
     res.json(state)
 })
@@ -54,9 +53,8 @@ app.get('/snake/new', function(req, res) {
     // generate new snake game
     const Snake = require('./Snake') 
     let id = Object.keys(games).length
-    let snake = new Snake()
+    let snake = new Snake(id)
     games[id] = snake 
-    games[id].new()
 
     res.redirect('/snake/game/' + id)
 })
@@ -65,12 +63,10 @@ app.post('/snake/new', function(req, res) {
     // generate new snake game
     const Snake = require('./Snake') 
     let id = Object.keys(games).length
-    let snake = new Snake()
+    let snake = new Snake(id)
     games[id] = snake 
-    games[id].new()
 
     let state = games[id].getState()
-    state.id = id
 
     res.json(state)
 })
@@ -82,11 +78,21 @@ app.post('/snake/move/:id', function(req, res) {
     games[id].updateState(direction)
 
     let state = games[id].getState()
-    state.id = id
 
     wssEventHandler.emit('update', state)
 
     res.json(state)
+})
+
+app.post('/snake/update/:id', function(req, res) {
+    const id = req.params.id 
+    const state = req.body
+
+    games[id].setState(state)
+
+    let new_state = games[id].getState()
+
+    res.json(new_state)
 })
 
 // websockets

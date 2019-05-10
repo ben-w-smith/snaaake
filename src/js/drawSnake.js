@@ -1,9 +1,8 @@
 import axios from 'axios'
 import Snake from '../../Snake'
 
-let Game = function(canvas) {
-    this = new Snake() 
-    this.new()
+let Game = function(canvas, id) {
+    Snake.call(this, id)
 
     this.canvas = canvas 
     this.ctx = this.canvas.getContext('2d')
@@ -13,24 +12,21 @@ let Game = function(canvas) {
     this.backgroundColor = 'white' 
     this.borderColor = 'black'
 
-    // let width = state.arena[0].length
-    // let height = state.arena.length 
-    let width = 30
-    let height = 30
-
-    this.width = width * this.unit
-    this.height = height * this.unit
+    this.canvas.width = this.width * this.unit
+    this.canvas.height = this.height * this.unit
 }
+
+Game.prototype = Object.create(Snake.prototype)
 
 Game.prototype.clearCanvas = function() {
     this.ctx.fillStyle = this.backgroundColor 
     this.ctx.strokeStyle = this.borderColor 
-    this.ctx.fillRect(0, 0, this.width, this.height) 
-    this.ctx.strokeRect(0, 0, this.width, this.height)
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height) 
+    this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height)
 }
 
 Game.prototype.drawCanvas = function() {
-    let grid = this.state.arena
+    let grid = this.arena
 
     for(let row = 0; row < grid.length; row++) {
         for(let column = 0; column < grid[row].length; column++) {
@@ -65,18 +61,22 @@ Game.prototype.draw = function() {
     this.drawCanvas()
 }
 
-Game.prototype.getState = function(id) {
-    axios.post('/snake/game/' + id)
+Game.prototype.getGameState = function() {
+    axios.post(this.id)
     .then(function(resp) {
-        this.state = resp.data
-        this.draw()
+        this.setGameState(resp.data)
     }.bind(this))
     .catch(function(err) {
         console.warn(err)
     })
 }
 
-Snake.prototype.keyCodeToDirection = function(keycode) {
+Game.prototype.setGameState = function(state) {
+    this.setState(state) 
+    this.draw()
+}
+
+Game.prototype.keyCodeToDirection = function(keycode) {
     const UP_KEY    = 38
     const DOWN_KEY  = 40
     const LEFT_KEY  = 37
@@ -88,38 +88,44 @@ Snake.prototype.keyCodeToDirection = function(keycode) {
     if(RIGHT_KEY === keycode) return 'right'
 }
 
-
-Snake.prototype.changeDirection = function(keycode) {
-    let direction = this.keyCodeToDirection(keycode)
-
-    const goingUp    = this.direction.y === -1
-    const goingDown  = this.direction.y === 1
-    const goingLeft  = this.direction.x === -1
-    const goingRight = this.direction.x === 1
-
-    if(direction === 'up' && !goingDown) {
-        this.direction.x = 0 
-        this.direction.y = -1
-    }
-
-    if(direction === 'down' && !goingUp) {
-        this.direction.x = 0 
-        this.direction.y = 1
-    }
-
-    if(direction === 'left' && !goingRight) {
-        this.direction.x = -1 
-        this.direction.y = 0
-    }
-
-    if(direction === 'right' && !goingLeft) {
-        this.direction.x = 1 
-        this.direction.y = 0
-    }
+Game.prototype.clientChangeDirection = function(keycode) {
+    let direction = this.keyCodeToDirection(keycode) 
+    this.changeDirection(direction)
 }
 
 Game.prototype.play = function() {
+    this.interval = setInterval(function() {
+        this.nextTick()
+    }.bind(this), 300)
+}
 
+Game.prototype.pause = function() {
+    clearInterval(this.interval)
+}
+
+Game.prototype.nextTick = function() {
+    this.updateState() 
+    let state = this.getState()
+
+    axios({
+        url: '/snake/update/' + this.id,
+        method: 'POST',
+        data: state, 
+    })
+    .then(function(resp) {
+        // success
+    })
+    .catch(function(err) {
+        console.warn(err)
+    })
+
+
+    if(this.gameOver) {
+        clearInterval(this.interval)
+        alert(`Your score was ${this.score}!`)
+    }
+
+    this.draw()
 }
 
 export default Game

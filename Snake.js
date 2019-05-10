@@ -1,16 +1,21 @@
 const LinkedList = require("./LinkedList")
 
-let Snake = function() {
-    this.width = 30
-    this.height = 30
+let Snake = function(id) {
+    this.new(id)
 }
 
-Snake.prototype.new = function() {
+Snake.prototype.new = function(id) {
+    this.id = id 
+
+    this.width = 30
+    this.height = 30
+
     this.arena = undefined
     this.food = undefined
+    this.snake = undefined
 
     this.direction = {
-        x: 0,
+        x: 1,
         y: 0,
     }
 
@@ -24,9 +29,9 @@ Snake.prototype.new = function() {
 
 Snake.prototype.createSnake = function() {
     this.snake = new LinkedList()
-    this.snake.addToHead({ x: 16, y: 15 }) 
-    this.snake.addToHead({ x: 15, y: 15 }) 
     this.snake.addToHead({ x: 14, y: 15 }) 
+    this.snake.addToHead({ x: 15, y: 15 }) 
+    this.snake.addToHead({ x: 16, y: 15 }) 
 }
 
 Snake.prototype.createFood = function() {
@@ -96,12 +101,13 @@ Snake.prototype.hitSnake = function() {
 
 Snake.prototype.hitWall = function() {
     let head = this.snake.head.value
-    return (
+    let hitWall = (
         head.x < 0
         || head.y < 0
         || head.x > this.width - 1
         || head.y > this.height - 1
     )
+    return hitWall
 }
 
 Snake.prototype.move = function() {
@@ -167,10 +173,44 @@ Snake.prototype.updateState = function(direction) {
 
 Snake.prototype.getState = function() {
     return {
-        score: this.score,
-        direction: this.direction,
+        food: this.food,
         arena: this.arena,
+        score: this.score,
+        snake: this.getSnakeCoords(),
         gameOver: this.gameOver,
+        direction: this.direction,
+    }
+}
+
+Snake.prototype.getSnakeCoords = function() {
+    let node = this.snake.head
+    let coords = [] 
+
+    while(node) {
+        coords.push(node.value) 
+        node = node.next
+    }
+
+    return coords
+}
+
+Snake.prototype.buildSnakeFromCoords = function(coords) {
+    this.snake = new LinkedList()
+    while(coords.length > 0) {
+        let coord = coords.pop()
+        this.snake.addToHead(coord)
+    }
+}
+
+Snake.prototype.setState = function(state) {
+    this.food = state.food || this.food
+    this.arena = state.arena || this.arena 
+    this.score = state.score || this.score
+    this.gameOver = state.gameOver || this.gameOver 
+    this.direction = state.direction || this.direction
+
+    if(state.snake) {
+        this.buildSnakeFromCoords(state.snake)
     }
 }
 

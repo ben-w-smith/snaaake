@@ -13,12 +13,12 @@ const start = document.getElementById("start")
 const pause = document.getElementById("pause")
 const next = document.getElementById("next")
 
-let game = new Game(canvas) 
-game.clearCanvas()
-if(game_id) {
-    game.getState(game_id)
-}
+// give some error message
+if(!game_id) return
 
+let game = new Game(canvas, game_id) 
+game.getGameState()
+game.draw()
 
 
 // event listeners
@@ -26,11 +26,22 @@ if(game_id) {
 
 // get game state
 document.addEventListener('update', function(e) {
-    console.log(ws.gameState)
-    game.state = ws.gameState
+    game.setGameState( JSON.parse(ws.gameState) )
 })
 
-document.addEventListener('keypress', function(e) {
+document.addEventListener('keydown', function(e) {
     let keyCode = e.keyCode
-    game.changeDirection(keyCode)
+    game.clientChangeDirection(keyCode)
+})
+
+start.addEventListener('click', function() {
+    game.play()
+})
+
+pause.addEventListener('click', function() {
+    game.pause()
+})
+
+next.addEventListener('click', function() {
+    game.nextTick()
 })

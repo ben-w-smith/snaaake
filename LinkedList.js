@@ -11,7 +11,9 @@ function Node(value, next, prev) {
 
 LinkedList.prototype.addToTail = function(value) {
     const node = new Node(value, null, this.tail)
+    node._tail = true
     if(this.tail) {
+        delete(this.tail._tail)
         this.tail.next = node 
     }
     if(this.head === null) {
@@ -22,7 +24,9 @@ LinkedList.prototype.addToTail = function(value) {
 
 LinkedList.prototype.addToHead = function(value) {
     const node = new Node(value, this.head, null) 
+    node._head = true
     if(this.head) {
+        delete(this.head._head)
         this.head.prev = node
     }
     if(this.tail === null) {
