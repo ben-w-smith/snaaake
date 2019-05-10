@@ -64,7 +64,6 @@ Game.prototype.draw = function(state) {
 Game.prototype.getState = function(id) {
     axios.post('/snake/game/' + id)
     .then(function(resp) {
-        console.log(resp) 
         this.draw(resp.data)
     }.bind(this))
     .catch(function(err) {
