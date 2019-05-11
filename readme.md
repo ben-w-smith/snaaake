@@ -54,3 +54,16 @@ payload:
     direction: { x: -1/0/1, y: -1/0/1 }
 }
 ```
+
+### Next Steps
+* use uuid for game ids rather than an integer
+* set a timeout for games to be deleted
+  * create an export button for the current state?
+  * create an import button?
+* use websockets for updating game state rather than post in snake client nextTick()
+  * create different message types for websocket?
+  * possible message types: 
+    * connected
+    * game over 
+    * new tick
+  * is there a better way to setup websocket instances?
