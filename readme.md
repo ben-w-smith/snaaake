@@ -3,19 +3,13 @@
 ## Install
 `$ npm install`
 
----
-
 ## Developement
 `$ npm run dev`
-
----
 
 ## Urls
 localhost:3000 -> hello world
 
 localhost:3000/snake -> snake!
-
----
 
 ## API Endpoints
 
@@ -55,7 +49,7 @@ payload:
 }
 ```
 
-### Next Steps
+## Next Steps
 * use uuid for game ids rather than an integer
 * set a timeout for games to be deleted
   * create an export button for the current state?
